@@ -8,6 +8,7 @@ racacor_dataset = 'datasets/df_homicidios_racacor.csv'
 sexo_dataset = 'datasets/df_homicidios_sexo.csv'
 idade_dataset = 'datasets/df_homicidios_idade.csv'
 escolaridade_dataset = 'datasets/df_homicidios_escolaridade.csv'
+causasviolentas_dataset = 'datasets/df_causas_violentas.csv'
 
 
 @st.cache
@@ -21,6 +22,9 @@ df_racacor = load_data(racacor_dataset)
 df_sexo = load_data(sexo_dataset)
 df_escolaridade = load_data(escolaridade_dataset)
 df_idade = load_data(idade_dataset)
+df_causasviolentas = load_data(causasviolentas_dataset)
+
+st.sidebar.markdown("Homicídios por ano e estado.")
 
 st.sidebar.subheader("Ano")
 ano_filtrado = st.sidebar.slider("Escolha o ano desejado", 2008, 2018, 2017)
@@ -30,12 +34,8 @@ estados = sorted(df_racacor['UF'].unique())
 estado_filtrado = st.sidebar.selectbox("Selecione o estado", estados)
 
 st.sidebar.subheader("Filtro")
-filtros = ["Escolaridade", "Idade", "Raça/Cor", "Sexo"]
+filtros = ["Escolaridade", "Faixa de Idade", "Raça/Cor", "Sexo"]
 filtro_selecionado = st.sidebar.selectbox("Escolha o filtro", filtros)
-
-st.sidebar.markdown("""
-                    A base de dados utilizada é gerenciada pelo ***Sistema de Informação sobre Mortalidade (SIM)***.
-                    """)
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -93,7 +93,7 @@ elif filtro_selecionado == 'Escolaridade':
 
     st.pyplot()
 
-elif filtro_selecionado == 'Idade':
+elif filtro_selecionado == 'Faixa de Idade':
     df = df_idade
 
     colunas_filtradas = [col for col in df if (col.startswith(str(ano_filtrado))) or (col in ['UF', 'lat', 'lon'])]
@@ -116,7 +116,30 @@ elif filtro_selecionado == 'Idade':
 # st.map(dados_filtrados)
 
 # tabela (provavelmente temporária)
-st.sidebar.subheader("Tabela")
-tabela = st.sidebar.empty()
-if tabela.checkbox("Mostrar tabela de dados"):
-    st.write(dados_filtrados)
+# st.sidebar.subheader("Tabela")
+# tabela = st.sidebar.empty()
+# if tabela.checkbox("Mostrar tabela de dados"):
+    # st.write(dados_filtrados)
+
+
+st.sidebar.markdown("Principais causas de mortes violentas por estado.")
+
+st.sidebar.subheader("Estado")
+estados_causas = sorted(df_causasviolentas['UF'].unique())
+estado_filtrado_causas = st.sidebar.selectbox("Selecione o estado*", estados_causas)
+
+st.markdown(f"""
+            ℹ️ Estão sendo exibidas as principais causas de mortes violentas no estado do **{estado_filtrado_causas}** entre 2008 e 2018.
+            """)
+
+grouped = df_causasviolentas[df_causasviolentas['UF'] == estado_filtrado_causas].groupby(['UF', 'descricao']).quantidade.sum().reset_index()
+df_causasviolentas_new = pd.DataFrame(grouped)
+df_causasviolentas_new.sort_values(by='quantidade', ascending=False, inplace=True)
+df_causasviolentas_new.set_index('descricao', inplace=True)
+plt.title(f'Principais causas de mortes violentas no estado do {estado_filtrado_causas}')
+sns.barplot(x=df_causasviolentas_new['quantidade'][:5], y=df_causasviolentas_new[:5].index)
+st.pyplot()
+
+st.sidebar.markdown("""
+                    A base de dados utilizada é gerenciada pelo ***Sistema de Informação sobre Mortalidade (SIM)***.
+                    """)

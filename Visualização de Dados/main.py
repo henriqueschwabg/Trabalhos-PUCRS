@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
-
 sns.set_style("whitegrid")
 
 # 4
@@ -26,7 +24,7 @@ df_sexo = load_data(sexo_dataset)
 df_escolaridade = load_data(escolaridade_dataset)
 df_idade = load_data(idade_dataset)
 
-st.sidebar.markdown("**Números de homicídios por ano e estado**")
+st.sidebar.markdown("**Homicídios por ano, estado e outros filtros**")
 
 st.sidebar.subheader("Ano")
 ano_filtrado = st.sidebar.slider("Escolha o ano desejado", 2008, 2018, 2017)

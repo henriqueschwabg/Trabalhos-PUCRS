@@ -26,6 +26,21 @@ def load_data(dataset):
     return data
 
 
+def autolabel(rects, labels=None, height_factor=1.05):
+    for i, rect in enumerate(rects):
+        height = rect.get_height()
+        if labels is not None:
+            try:
+                label = labels[i]
+            except (TypeError, KeyError):
+                label = ' '
+        else:
+            label = '%d' % int(height)
+        ax.text(rect.get_x() + rect.get_width() / 2., height_factor * height,
+                '{}'.format(label),
+                ha='center', va='bottom')
+
+
 df_racacor = load_data(racacor_dataset)
 df_sexo = load_data(sexo_dataset)
 df_escolaridade = load_data(escolaridade_dataset)
@@ -65,11 +80,11 @@ if filtro_selecionado == 'Raça/Cor':
     df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
     df_new['B'] = df_new['B'].astype(int)
 
-    fig, ax = plt.subplots(figsize=(12, 8))
-    sns.catplot('A', 'B', data=df_new, ax = ax)
+    sns.catplot('A', 'B', data=df_new)
     plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
     plt.xlabel('raça/cor')
     plt.ylabel('contagem')
+    sns.despine()
 
     st.pyplot()
 
@@ -101,11 +116,13 @@ elif filtro_selecionado == 'Escolaridade':
     df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
     df_new['B'] = df_new['B'].astype(int)
 
-    fig, ax = plt.subplots(figsize=(12, 8))
-    sns.barplot('A', 'B', data=df_new, ax=ax)
+    ax = sns.barplot('A', 'B', data=df_new)
     plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
     plt.xlabel('anos de escolaridade')
     plt.ylabel('contagem')
+    sns.despine()
+
+    autolabel(ax.patches, labels=df_new['B'], height_factor=1.02)
 
     st.pyplot()
 
@@ -122,12 +139,14 @@ elif filtro_selecionado == 'Faixa de Idade':
     df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
     df_new['B'] = df_new['B'].astype(int)
 
-    fig, ax = plt.subplots(figsize=(12, 8))
-    sns.barplot('A', 'B', data=df_new, ax=ax)
+    ax = sns.barplot('A', 'B', data=df_new)
     plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
     plt.xlabel('faixa de idade')
     plt.ylabel('contagem')
     plt.xticks(rotation=30, fontsize=10)
+    sns.despine()
+
+    autolabel(ax.patches, labels=df_new['B'], height_factor=1.02)
 
     st.pyplot()
 
@@ -151,11 +170,11 @@ df_causasviolentas_new = pd.DataFrame(grouped)
 df_causasviolentas_new.sort_values(by='quantidade', ascending=False, inplace=True)
 df_causasviolentas_new.set_index('descricao', inplace=True)
 
-fig, ax = plt.subplots(figsize=(12, 8))
 plt.title(f'Principais causas de mortes violentas no estado do {estado_filtrado_causas}')
-sns.barplot(x=df_causasviolentas_new['quantidade'][:5], y=df_causasviolentas_new[:5].index, ax=ax)
+sns.barplot(x=df_causasviolentas_new['quantidade'][:5], y=df_causasviolentas_new[:5].index)
 plt.xlabel('contagem')
 plt.ylabel('causa')
+sns.despine()
 
 st.pyplot()
 

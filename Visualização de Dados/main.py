@@ -2,7 +2,14 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_style("whitegrid")
+
+rc = {'figure.figsize':(12,8),
+      'axes.facecolor':'white',
+      'axes.grid' : True,
+      'grid.color': '.8',
+      'font.family':'Times New Roman',
+      'font.size' : 15}
+plt.rcParams.update(rc)
 
 # 4
 
@@ -58,9 +65,10 @@ if filtro_selecionado == 'Raça/Cor':
     df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
     df_new['B'] = df_new['B'].astype(int)
 
-    sns.catplot('A', 'B', data=df_new)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    sns.catplot('A', 'B', data=df_new, ax = ax)
     plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
-    plt.xlabel('')
+    plt.xlabel('raça/cor')
     plt.ylabel('contagem')
 
     st.pyplot()
@@ -93,9 +101,10 @@ elif filtro_selecionado == 'Escolaridade':
     df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
     df_new['B'] = df_new['B'].astype(int)
 
-    sns.barplot('A', 'B', data=df_new)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    sns.barplot('A', 'B', data=df_new, ax=ax)
     plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
-    plt.xlabel('')
+    plt.xlabel('anos de escolaridade')
     plt.ylabel('contagem')
 
     st.pyplot()
@@ -113,11 +122,12 @@ elif filtro_selecionado == 'Faixa de Idade':
     df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
     df_new['B'] = df_new['B'].astype(int)
 
-    sns.barplot('A', 'B', data=df_new)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    sns.barplot('A', 'B', data=df_new, ax=ax)
     plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
-    plt.xlabel('')
+    plt.xlabel('faixa de idade')
     plt.ylabel('contagem')
-    plt.xticks(rotation=30, fontsize=6)
+    plt.xticks(rotation=30, fontsize=10)
 
     st.pyplot()
 
@@ -143,7 +153,9 @@ df_causasviolentas_new.set_index('descricao', inplace=True)
 
 fig, ax = plt.subplots(figsize=(12, 8))
 plt.title(f'Principais causas de mortes violentas no estado do {estado_filtrado_causas}')
-ax = sns.barplot(x=df_causasviolentas_new['quantidade'][:5], y=df_causasviolentas_new[:5].index)
+sns.barplot(x=df_causasviolentas_new['quantidade'][:5], y=df_causasviolentas_new[:5].index, ax=ax)
+plt.xlabel('contagem')
+plt.ylabel('causa')
 
 st.pyplot()
 

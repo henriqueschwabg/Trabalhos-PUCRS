@@ -59,9 +59,11 @@ def call_questao_4():
         df_new['B'] = df_new['B'].astype(int)
 
         sns.catplot('A', 'B', data=df_new, s=20)
-        plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
-        plt.xlabel('raça/cor')
-        plt.ylabel('contagem')
+        plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}', fontsize=10)
+        plt.xlabel('raça/cor', fontsize=8)
+        plt.ylabel('contagem', fontsize=8)
+        plt.yticks(fontsize=10)
+        plt.xticks(fontsize=10)
         sns.despine()
 
         st.pyplot()
@@ -164,7 +166,10 @@ def call_questao_5():
     df_new = df_new.set_index('A')
     pd.set_option('display.max_colwidth', 200)
     st.pyplot()
-    st.write(df_new['Causa'])
+    st.markdown("""
+                   ℹ️ Leia a descrição das 5 causas de mortes mais frequentes.
+                   """)
+    st.dataframe(df_new['Causa'])
 
 
 def autolabel(rects, labels=None, height_factor=1.05, aux=None):

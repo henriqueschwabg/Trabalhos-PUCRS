@@ -58,12 +58,10 @@ def call_questao_4():
         df_new['B'] = list(dados_filtrados[colunas_filtradas].values.T)
         df_new['B'] = df_new['B'].astype(int)
 
-        sns.catplot('A', 'B', data=df_new, s=20)
-        plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}', fontsize=10)
-        plt.xlabel('raça/cor', fontsize=8)
-        plt.ylabel('contagem', fontsize=8)
-        plt.yticks(fontsize=10)
-        plt.xticks(fontsize=10)
+        sns.stripplot('A', 'B', data=df_new, s=25)
+        plt.title(f'Homicídios por {filtro_selecionado} em {ano_filtrado} no {estado_filtrado}')
+        plt.xlabel('raça/cor')
+        plt.ylabel('contagem')
         sns.despine()
 
         st.pyplot()
@@ -164,10 +162,9 @@ def call_questao_5():
 
     df_new = df_new.rename(columns={"C": "Causa"})
     df_new = df_new.set_index('A')
-    pd.set_option('display.max_colwidth', 200)
     st.pyplot()
     st.markdown("""
-                   ℹ️ Leia a descrição das 5 causas de mortes mais frequentes.
+                   ℹ️ Leia a descrição das 5 causas de mortes mais frequentes (por categoria do CID 10).
                    """)
     st.dataframe(df_new['Causa'])
 
